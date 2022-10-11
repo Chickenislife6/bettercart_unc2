@@ -10,7 +10,7 @@ from datareq.datatypes.Creds import Creds
 from datareq.datatypes.monad import Ok
 import datareq.datatypes.monad as Monad
 from datareq.sso import get_icsid, login
-from datareq.utils.generate import generate_delete, generate_enroll, generate_generic, generate_lookup, generate_swap
+from datareq.utils.generate import generate_delete, generate_enroll, generate_generic, generate_lookup, generate_swap, generate_unique
 from datareq.utils.util import get_classes, get_statenum, save_to_file
 from concurrent.futures import ThreadPoolExecutor
 import concurrent
@@ -110,6 +110,10 @@ class SignUpHelper:
     def setup_cart(self) -> dict[str, int]:
         # returns list of classes, and updates statenum
         self.c.statenum, response = self.get_state(f"https://cs.cc.unc.edu/psc/campus/EMPLOYEE/SA/c/SA_LEARNER_SERVICES_2.SSR_SSENRL_CART.GBL").unwrap()
+        self.c.statenum, response = self.post_state("https://cs.cc.unc.edu/psc/campus/EMPLOYEE/SA/c/SA_LEARNER_SERVICES_2.SSR_SSENRL_CART.GBL", 
+            err = "failed to select year",
+            params = generate_unique(self.c, "DERIVED_SSS_SCT_SSR_PB_GO", {"SSR_DUMMY_RECV1$sels$1$$0": "1"})
+            ).unwrap()
         return get_classes(response.text)
 
 
@@ -119,7 +123,7 @@ class SignUpHelper:
             url="https://cs.cc.unc.edu/psc/campus/EMPLOYEE/SA/c/SA_LEARNER_SERVICES_2.SSR_SSENRL_CART.GBL",
             params=body
         )
-        save_to_file(response.text, 'test.txt')
+        save_to_file(response.text, 'register_bad')
         pattern = re.compile(r'ENRL_REQUEST_ID=(\d+)')
         cart_id = pattern.search(response.text).group(1)
 
@@ -135,7 +139,7 @@ class SignUpHelper:
 
 
     def swap(self, class1, class2):
-        self.c.statenum, response = self.get_state("https://cs.cc.unc.edu/psc/campus/EMPLOYEE/SA/c/SA_LEARNER_SERVICES.SSR_SSENRL_SWAP.GBL?Page=SSR_SSENRL_SWAP&Action=A&ACAD_CAREER=UGRD&ENRL_REQUEST_ID=&INSTITUTION=UNCCH&STRM=2229").unwrap()
+        self.c.statenum, response = self.get_state("https://cs.cc.unc.edu/psc/campus/EMPLOYEE/SA/c/SA_LEARNER_SERVICES.SSR_SSENRL_SWAP.GBL?Page=SSR_SSENRL_SWAP&Action=A&ACAD_CAREER=UGRD&ENRL_REQUEST_ID=&INSTITUTION=UNCCH&STRM=2232").unwrap()
 
         params = generate_swap(self.c, class1, class2, "DERIVED_REGFRM1_SSR_PB_ADDTOLIST1$184$")
         self.c.statenum, response = self.post_state(

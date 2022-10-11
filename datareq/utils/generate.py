@@ -27,6 +27,11 @@ def generate_swap(c: Creds, c1, c2, action):
     }
     return data
 
+def generate_unique(c: Creds, action, data):
+    data1 = generate_generic(c, action)
+    data1.update(data)
+    return data1
+
 def generate_generic(c: Creds, action):
     data = {
     "ICStateNum": c.statenum,

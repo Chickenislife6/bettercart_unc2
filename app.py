@@ -6,11 +6,12 @@ from datareq.datatypes.Creds import Creds
 from unc import SignUpHelper
 from flask import Flask, request
 from flask_cors import CORS
+from flask_cors import cross_origin
 app = Flask(__name__)
-CORS(app, max_age=86400)
-print("test")
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/", methods = ['GET', 'POST'])
+@cross_origin()
 def hello():
     if request.method == 'GET':
         return "HELLO WORLD!"
@@ -21,6 +22,7 @@ def hello():
     return "Hello World!"
 
 @app.route("/api/lookup", methods = ['POST'])
+@cross_origin()
 def lookup():
     user = request.form.get('USER')
     password = request.form.get('PASSWORD')
@@ -34,6 +36,7 @@ def lookup():
     return json.dumps(result)
 
 @app.route("/api/add", methods = ['POST'])
+@cross_origin()
 def add():
     user = request.form.get('USER')
     password = request.form.get('PASSWORD')
@@ -57,6 +60,7 @@ def add():
     return result
 
 @app.route("/api/swap", methods = ['POST'])
+@cross_origin()
 def swap():
     user = request.form.get('USER')
     password = request.form.get('PASSWORD')
@@ -76,5 +80,5 @@ def swap():
 
 
 if __name__ == "__main__":
+    CORS(app, max_age=86400)
     app.run(debug=True)
-
