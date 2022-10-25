@@ -77,7 +77,14 @@ def swap():
     result = instance.swap(classes[0], classes[1])
     return result
 
-
+@app.route("/api/verify", methods = ['POST'])
+@cross_origin()
+def verify():
+    user = request.form.get('USER')
+    password = request.form.get('PASSWORD')
+    cred = Creds(user, password)
+    instance = SignUpHelper.try_login(cred)
+    return instance
 
 if __name__ == "__main__":
     CORS(app, max_age=86400)
