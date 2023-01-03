@@ -8,11 +8,7 @@ import requests.utils
 from datareq.datatypes.Creds import Creds
 from datareq.datatypes.monad import Err, Ok, Option
 from datareq.utils.util import get_saml, get_statenum
-
-if __name__ == "__main__":
-    from utils.util import save_to_file
-else:
-    from datareq.utils.util import save_to_file
+from datareq.utils.util import save_to_file
 
 
 
@@ -82,7 +78,6 @@ def get_icsid(s: requests.Session, c: Creds) -> Option:
     response = s.get(
         url="https://cs.cc.unc.edu/psc/campus/EMPLOYEE/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL?PortalActualURL=https%3a%2f%2fcs.cc.unc.edu%2fpsc%2fcampus%2fEMPLOYEE%2fSA%2fc%2fSA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL&PortalContentURL=https%3a%2f%2fcs.cc.unc.edu%2fpsc%2fcampus%2fEMPLOYEE%2fSA%2fc%2fSA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL&PortalContentProvider=SA&PortalCRefLabel=Student%20Center&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fpa.cc.unc.edu%2fpsp%2fpaprd%2f&PortalURI=https%3a%2f%2fpa.cc.unc.edu%2fpsc%2fpaprd%2f&PortalHostNode=EMPL&NoCrumbs=yes"
     )
-    save_to_file(response.text, "icsid.html")
     soup = BeautifulSoup(response.content, 'html.parser')
     elt = soup.find('input', {'id':'ICSID'})
     if elt == None:

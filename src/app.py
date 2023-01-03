@@ -9,15 +9,18 @@ from functions.signupclass import SessionWrapper
 from functions import check_class, getsubject, register, swapclasses
 from functions.attribute_to_description import translate
 
+import os, psutil
+process = psutil.Process(os.getpid())
+
 app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
-
+app.config["CACHE_TYPE"] = "null"
 
 @app.route("/", methods=["GET", "POST"])
 @cross_origin()
 def hello():
     if request.method == "GET":
-        return "HELLO WORLD!"
+        return f"HELLO WORLD! {process.memory_info().rss}"
     if request.method == "POST":
         actions = request.form.get("ACTIONS")
         print(actions)
@@ -26,7 +29,7 @@ def hello():
 
 @app.route("/api/lookup_subject", methods=["POST"])
 @cross_origin()
-@store_data
+# @store_data
 def lookup_subject():
     user = request.form.get("USER")
     password = request.form.get("PASSWORD")
@@ -49,7 +52,6 @@ def lookup_subject_guest():
 
     for key in r.keys():
         value = r.get(key)
-        print(key, value)
         if translate(attribute) in value and subject in value:
             
             result[key] = value.split("~")[:-1]
@@ -134,4 +136,4 @@ def verify():
 
 if __name__ == "__main__":
     CORS(app, max_age=86400)
-    app.run(debug=True)
+    app.run()

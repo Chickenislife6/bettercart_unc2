@@ -20,10 +20,8 @@ def store_data(func):
     def inner_func(*args, **kwargs):
         output = func(*args, **kwargs)
         for (key, value) in json.loads(output).items():
-            s = ""
-            for v in value:
-                s += v + "~"
-            r.set(key, s)
+            res = ''.join([str(ele) + "~" for ele in value])
+            r.set(key, res)
         return output
 
     return inner_func
