@@ -1,4 +1,3 @@
-import copy
 import gc
 from datareq.utils.generate import (
     generate_generic,
