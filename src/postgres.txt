@@ -1,0 +1,5 @@
+  Username:    postgres
+  Password:    1fe784364942986d90e7dc91f3639b59c974008537bbc22b
+  Hostname:    restless-star-7479.internal
+  Proxy Port:  5432
+  Postgres Port: 5433

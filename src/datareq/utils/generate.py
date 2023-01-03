@@ -43,16 +43,40 @@ def generate_generic(c: Creds, action):
     return data
 
 
-def generate_subject_lookup(c: Creds, subject: str):
+def generate_subject_lookup(c: Creds, subject: str, gt: bool, attribute: str):
+    var = "T"
+    if gt:
+        var = "G"
     data = {
         "ICStateNum": c.statenum,
+
         "ICAction": "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH",
         "ICSID": c.ICSID,
-        "SSR_CLSRCH_WRK_CATALOG_NBR$1": "600",
-        "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1": "T",
+        "SSR_CLSRCH_WRK_CATALOG_NBR$1": "500",
+        "SSR_CLSRCH_WRK_SSR_EXACT_MATCH1$1": var,
         "SSR_CLSRCH_WRK_SUBJECT$0": subject,
         "SSR_CLSRCH_WRK_SSR_OPEN_ONLY$chk$3": "N",
+        "SSR_CLSRCH_WRK_INCLUDE_CLASS_DAYS$5":"J",
+        "SSR_CLSRCH_WRK_MON$chk$5":"Y",
+        "SSR_CLSRCH_WRK_MON$5":"Y",
+        "SSR_CLSRCH_WRK_TUES$chk$5":"Y",
+        "SSR_CLSRCH_WRK_TUES$5":"Y",
+        "SSR_CLSRCH_WRK_WED$chk$5":"Y",
+        "SSR_CLSRCH_WRK_WED$5":"Y",
+        "SSR_CLSRCH_WRK_THURS$chk$5":"Y",
+        "SSR_CLSRCH_WRK_THURS$5":"Y",
+        "SSR_CLSRCH_WRK_FRI$chk$5":"Y",
+        "SSR_CLSRCH_WRK_FRI$5":"Y",
+        "SSR_CLSRCH_WRK_SAT$chk$5":"Y",
+        "SSR_CLSRCH_WRK_SAT$5":"Y",
+        "SSR_CLSRCH_WRK_SUN$chk$5":"Y",
+        "SSR_CLSRCH_WRK_SUN$5":"Y",
+        "SSR_CLSRCH_WRK_SSR_EXACT_MATCH2$6":"B",
+        "SSR_CLSRCH_WRK_SSR_UNITS_MAX_OPR$9": "LE",
+        "SSR_CLSRCH_WRK_UNITS_MAXIMUM$9": "18"
     }
+    if attribute: 
+        data["NC_CSE_ATTR_TBL_CRSE_ATTR_VALUE$0"] = attribute
     return data
 
 

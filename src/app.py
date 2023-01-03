@@ -4,8 +4,10 @@ from datareq.datatypes.Creds import Creds
 from flask import Flask, request
 from flask_cors import CORS
 from flask_cors import cross_origin
+from database.database import get_redis, store_data
 from functions.signupclass import SessionWrapper
 from functions import check_class, getsubject, register, swapclasses
+from functions.attribute_to_description import translate
 
 app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
@@ -22,18 +24,40 @@ def hello():
         return actions
     return "Hello World!"
 
-
 @app.route("/api/lookup_subject", methods=["POST"])
 @cross_origin()
+@store_data
 def lookup_subject():
     user = request.form.get("USER")
     password = request.form.get("PASSWORD")
     subject = request.form.get("SUBJECT")
+    attribute = request.form.get("ATTRIBUTE")
     cred = Creds(user, password)
     instance = SessionWrapper.try_login(cred)
-    return json.dumps(getsubject.get_cart(instance, subject))
+    d = getsubject.get_cart(instance, subject, False, attribute)
+    d.update(getsubject.get_cart(instance, subject, True, attribute))
+    return json.dumps(d)
+
+@app.route("/api/guest/lookup_subject", methods=["POST", "GET"])
+@cross_origin()
+def lookup_subject_guest():
+    subject = request.form.get("SUBJECT", default="")
+    attribute = request.form.get("ATTRIBUTE", default="")
+
+    r = get_redis()
+    result = {}
+
+    for key in r.keys():
+        value = r.get(key)
+        print(key, value)
+        if translate(attribute) in value and subject in value:
+            
+            result[key] = value.split("~")[:-1]
+    
+    return json.dumps(result)
 
 
+## depreciated!!
 @app.route("/api/lookup", methods=["POST"])
 @cross_origin()
 def lookup():
@@ -105,6 +129,7 @@ def verify():
     cred = Creds(user, password)
     instance = SessionWrapper.try_login(cred)
     return instance
+
 
 
 if __name__ == "__main__":
