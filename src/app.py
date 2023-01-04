@@ -29,7 +29,7 @@ def hello():
 
 @app.route("/api/lookup_subject", methods=["POST"])
 @cross_origin()
-# @store_data
+@store_data
 def lookup_subject():
     user = request.form.get("USER")
     password = request.form.get("PASSWORD")
@@ -50,10 +50,11 @@ def lookup_subject_guest():
     r = get_redis()
     result = {}
 
-    for key in r.keys():
-        value = r.get(key)
-        if translate(attribute) in value and subject in value:
-            
+    keys = r.keys()
+
+    for (key, value) in zip(keys, r.mget(keys)):
+        values = value.split("~")[:-1]
+        if translate(attribute) in values[-1] and subject in values[0]:
             result[key] = value.split("~")[:-1]
     
     return json.dumps(result)
